@@ -4,6 +4,7 @@ import star from "../../../../assets/star";
 import openIcon from "../../../../assets/open";
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { Text } from "../../../components/typography/text.component";
+import { Favorite } from "../../../components/favorites/favorite.component";
 import {
   Cover,
   Address,
@@ -30,6 +31,7 @@ export const RestaurantInfoCard = ({ restaurant = {} }) => {
   const ratingArray = Array.from(new Array(Math.floor(rating)));
   return (
     <RestaurantCard elevation={10}>
+      <Favorite restaurant={restaurant} />
       <Cover source={{ uri: photos[0] }} />
       <Info>
         <Text variant="label">{name}</Text>
