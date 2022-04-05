@@ -1,39 +1,41 @@
-import { StatusBar } from "react-native";
-import styled from "styled-components/native";
-import React from "react";
-import { Searchbar } from "react-native-paper";
-
+import React, { useContext } from "react";
 import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
+import { SafeContainer } from "../../../components/utils/safe-area.component";
+import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
+import { CenteredSpinner } from "../../../components/utils/spinner";
+import { RestaurantListWrapper, RestaurantList } from "./restaurants.styles";
+import { Search } from "../components/search.component";
+import { Pressable } from "react-native";
 
-const SafeContainer = styled.SafeAreaView`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.ui.error};
-  ${StatusBar.currentHeight && `margin-top: ${StatusBar.currentHeight}px`};
-`;
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-  background-color: ${(props) => props.theme.colors.bg.primary};
-  justify-content: center;
-  align-items: center;
-`;
-const ListContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-  background-color: ${(props) => props.theme.colors.bg.secondary};
-  flex: 1;
-`;
-
-export const RestaurantsScreen = () => {
+export const RestaurantsScreen = ({ navigation }) => {
+  const { restaurants, isLoading, error } = useContext(RestaurantsContext);
+  console.log(restaurants[0]);
   return (
     <SafeContainer>
-      <SearchContainer>
-        <Searchbar
-          placeholder="Search"
-          onChangeText={() => console.log("hello")}
-        />
-      </SearchContainer>
-      <ListContainer>
-        <RestaurantInfoCard></RestaurantInfoCard>
-      </ListContainer>
+      <Search />
+      <RestaurantListWrapper>
+        {isLoading ? (
+          <CenteredSpinner />
+        ) : (
+          <RestaurantList
+            data={restaurants}
+            renderItem={({ item }) => {
+              return (
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("RestaurantDetail", {
+                      restaurant: item,
+                    })
+                  }
+                >
+                  <RestaurantInfoCard restaurant={item} />
+                </Pressable>
+              );
+            }}
+            keyExtractor={(item) => item.name}
+          />
+        )}
+      </RestaurantListWrapper>
     </SafeContainer>
   );
 };

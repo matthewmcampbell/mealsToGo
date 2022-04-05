@@ -1,6 +1,9 @@
+import * as React from "react";
+import { Text, View } from "react-native";
+
 import { Fragment } from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import { RestaurantsScreen } from "./src/features/restaurants/screens/restaurants.screen";
+
 import { ThemeProvider } from "styled-components/native";
 
 import {
@@ -10,6 +13,10 @@ import {
 import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
 
 import { theme } from "./src/infrastructure/theme/";
+import { RestaurantsContextProvider } from "./src/services/restaurants/restaurants.context";
+import { LocationContextProvider } from "./src/services/location/location.context";
+import { Navigation } from "./src/infrastructure/navigation/";
+
 export default function App() {
   const [oswaldLoaded] = useOswald({
     Oswald_400Regular,
@@ -22,10 +29,15 @@ export default function App() {
   if (!oswaldLoaded || !latoLoaded) {
     return null;
   }
+
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
-        <RestaurantsScreen />
+        <LocationContextProvider>
+          <RestaurantsContextProvider>
+            <Navigation />
+          </RestaurantsContextProvider>
+        </LocationContextProvider>
       </ThemeProvider>
       <ExpoStatusBar />
     </Fragment>

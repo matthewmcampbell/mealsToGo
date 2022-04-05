@@ -1,5 +1,4 @@
 import React from "react";
-import { Card } from "react-native-paper";
 import { SvgXml } from "react-native-svg";
 import star from "../../../../assets/star";
 import openIcon from "../../../../assets/open";
@@ -13,29 +12,36 @@ import {
   Section,
   SectionEnd,
   Icon,
+  RestaurantCard,
 } from "./restaurant-info-card.styles";
 
 export const RestaurantInfoCard = ({ restaurant = {} }) => {
   const {
     name = "Burger King",
     icon,
-    photos = ["https://i.insider.com/5bbd187101145529745a9895?width=700"],
+    photos = [],
     address = "100 somewhere",
     isOpenNow = true,
     rating = 4,
     isClosedTemporarily = true,
+    placeId,
   } = restaurant;
 
   const ratingArray = Array.from(new Array(Math.floor(rating)));
   return (
-    <Card elevation={1}>
+    <RestaurantCard elevation={10}>
       <Cover source={{ uri: photos[0] }} />
       <Info>
         <Text variant="label">{name}</Text>
         <Section>
           <Rating>
             {ratingArray.map((_, index) => (
-              <SvgXml key={index} xml={star} width={20} height={20} />
+              <SvgXml
+                key={`star-${placeId}-${index}`}
+                xml={star}
+                width={20}
+                height={20}
+              />
             ))}
           </Rating>
           <SectionEnd>
@@ -47,12 +53,12 @@ export const RestaurantInfoCard = ({ restaurant = {} }) => {
             </Spacer>
 
             <Spacer position="left" size="medium">
-              {/* <Icon source={{ uri: icon }}></Icon> */}
+              <Icon source={{ uri: icon }}></Icon>
             </Spacer>
           </SectionEnd>
         </Section>
         <Address>{address}</Address>
       </Info>
-    </Card>
+    </RestaurantCard>
   );
 };
