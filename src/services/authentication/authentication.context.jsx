@@ -1,5 +1,6 @@
 import React, { useState, createContext, useEffect } from "react";
-import { loginRequest } from "./authentication.service";
+import { loginRequest, makeAccount } from "./authentication.service";
+import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
 export const AuthenticationContext = createContext();
 
 export const AuthenticationContextProvider = (props) => {
@@ -7,38 +8,63 @@ export const AuthenticationContextProvider = (props) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  const onLogin = (email, password) => {
+  const auth = getAuth();
+  onAuthStateChanged(auth, (usr) => {
+    if (usr) {
+      setUser(usr);
+    }
+    setIsLoading(false);
+  });
+
+  const onLogin = async (email, password) => {
     setIsLoading(true);
-    console.log("a");
-    loginRequest(email, password)
-      .then((u) => {
-        console.log("b");
-        setUser(u);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log("c");
-        setError(err);
-        setIsLoading(false);
-      });
+    try {
+      let loginUser = await loginRequest(email, password);
+      setUser(loginUser);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.toString());
+      setIsLoading(false);
+    }
+  };
+
+  const onRegister = async (email, password, repeatedPassword) => {
+    if (!email.length || !password.length || password !== repeatedPassword) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      let registerUser = await makeAccount(email, password);
+      setUser(registerUser);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.toString());
+      setIsLoading(false);
+    }
+  };
+
+  const onLogout = () => {
+    setUser(null);
+    signOut(auth);
   };
 
   useEffect(() => {
     const loginFunc = async () => {
-      console.log("d");
-      const login = await onLogin("j@email.com", "test123");
-      console.log("e");
-      console.log(login);
+      onLogin("j@email.com", "test13");
     };
     loginFunc();
   }, []);
+
   return (
     <AuthenticationContext.Provider
       value={{
+        isAuthenticated: !!user,
         user,
         isLoading,
         error,
         onLogin,
+        onRegister,
+        onLogout,
       }}
     >
       {props.children}
