@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 import { Spacer } from "../../../components/spacer/spacer.component";
-import { TextInput } from "react-native-paper";
 import { CenteredSpinner } from "../../../components/utils/spinner";
 import { Text } from "../../../components/typography/text.component";
 import {
@@ -19,10 +18,9 @@ export const LoginScreen = ({ navigation }) => {
   [password, setPassword] = useState("");
   [firstTry, setFirstTry] = useState(true);
 
-  const { isAuthenticated, isLoading, error, onLogin } = useContext(
+  const { isAuthenticated, isLoading, err, onLogin } = useContext(
     AuthenticationContext
   );
-  console.log(error);
   return (
     <AccountBackgroundImage>
       <AccountCover />
@@ -54,10 +52,9 @@ export const LoginScreen = ({ navigation }) => {
               <AuthButton
                 icon="lock-open"
                 mode="contained"
-                onPress={() => {
+                onPress={async () => {
                   if (email.length && password.length) {
-                    setFirstTry(false);
-                    onLogin(email, password);
+                    onLogin(email, password, setFirstTry);
                     setPassword("");
                   }
                 }}
@@ -68,7 +65,9 @@ export const LoginScreen = ({ navigation }) => {
             <BackButton mode="contained" onPress={() => navigation.goBack()}>
               Back
             </BackButton>
-            {!firstTry && <Text variant="error">Whoops! Try again.</Text>}
+            {!firstTry && !isAuthenticated && err && (
+              <Text variant="error">Whoops! Try again.</Text>
+            )}
           </AccountContainer>
         </>
       )}

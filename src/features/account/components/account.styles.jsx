@@ -3,7 +3,7 @@ import { colors } from "../../../infrastructure/theme/colors";
 import { Button } from "react-native-paper";
 import { Text } from "../../../components/typography/text.component";
 import { TextInput } from "react-native-paper";
-const image = "../../../../assets/background.jpg";
+const image = "../../../../assets/background.png";
 
 export const AccountBackgroundImage = styled.ImageBackground.attrs({
   source: require(image),

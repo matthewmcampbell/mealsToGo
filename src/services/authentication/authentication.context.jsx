@@ -3,29 +3,31 @@ import { loginRequest, makeAccount } from "./authentication.service";
 import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
 export const AuthenticationContext = createContext();
 
-export const AuthenticationContextProvider = (props) => {
+export const AuthenticationContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [err, setError] = useState(null);
 
   const auth = getAuth();
   onAuthStateChanged(auth, (usr) => {
     if (usr) {
       setUser(usr);
     }
-    setIsLoading(false);
   });
 
-  const onLogin = async (email, password) => {
+  const onLogin = async (email, password, setFirstTry) => {
     setIsLoading(true);
-    try {
-      let loginUser = await loginRequest(email, password);
-      setUser(loginUser);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.toString());
-      setIsLoading(false);
-    }
+    loginRequest(email, password)
+      .then((u) => {
+        setUser(u);
+        setIsLoading(false);
+        setFirstTry(false);
+      })
+      .catch((err) => {
+        setError(err.toString());
+        setIsLoading(false);
+        setFirstTry(false);
+      });
   };
 
   const onRegister = async (email, password, repeatedPassword) => {
@@ -33,14 +35,17 @@ export const AuthenticationContextProvider = (props) => {
       return;
     }
     setIsLoading(true);
-    try {
-      let registerUser = await makeAccount(email, password);
-      setUser(registerUser);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.toString());
-      setIsLoading(false);
-    }
+    makeAccount(email, password)
+      .then((u) => {
+        setUser(u);
+        setIsLoading(false);
+        setFirstTry(false);
+      })
+      .catch((err) => {
+        setError(err.toString());
+        setIsLoading(false);
+        setFirstTry(false);
+      });
   };
 
   const onLogout = () => {
@@ -48,26 +53,19 @@ export const AuthenticationContextProvider = (props) => {
     signOut(auth);
   };
 
-  useEffect(() => {
-    const loginFunc = async () => {
-      onLogin("j@email.com", "test13");
-    };
-    loginFunc();
-  }, []);
-
   return (
     <AuthenticationContext.Provider
       value={{
         isAuthenticated: !!user,
         user,
         isLoading,
-        error,
+        err,
         onLogin,
         onRegister,
         onLogout,
       }}
     >
-      {props.children}
+      {children}
     </AuthenticationContext.Provider>
   );
 };
