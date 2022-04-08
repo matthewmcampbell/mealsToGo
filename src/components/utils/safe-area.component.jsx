@@ -8,7 +8,8 @@ export const SafeContainer = styled.SafeAreaView`
 `;
 
 export const SafeContainerDetails = styled.SafeAreaView`
-  flex: 0.9;
+  width: 92%;
+  align-self: center;
   background-color: ${(props) => props.theme.colors.bg.primary};
   ${StatusBar.currentHeight && `margin-top: ${StatusBar.currentHeight}px`};
 `;

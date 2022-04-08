@@ -41,21 +41,21 @@ export const AuthButton = styled(Button).attrs({
 
 export const BackButton = styled(AuthButton)`
   width: 40%;
-
   align-self: center;
 `;
 
 export const Title = styled(Text)`
-  font-size: 30px;
-  padding-bottom: 450px;
+  font-size: 60px;
+  font-family: ${(props) => props.theme.fonts.fancy};
+  padding-bottom: 500px;
   position: absolute;
-  color: white;
+  color: black;
 `;
 
 export const AnimationWrapper = styled.View`
   width: 100%;
   height: 40%;
   position: absolute;
-  top: 30px;
+  top: 85px;
   padding: ${(props) => props.theme.space[2]};
 `;

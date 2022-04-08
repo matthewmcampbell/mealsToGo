@@ -10,6 +10,10 @@ import {
   Oswald_400Regular,
 } from "@expo-google-fonts/oswald";
 import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
+import {
+  useFonts as useDancing,
+  DancingScript_400Regular,
+} from "@expo-google-fonts/dancing-script";
 
 import { theme } from "./src/infrastructure/theme/";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
@@ -43,7 +47,11 @@ export default function App() {
     Lato_400Regular,
   });
 
-  if (!oswaldLoaded || !latoLoaded) {
+  const [dancingLoaded] = useDancing({
+    DancingScript_400Regular,
+  });
+
+  if (!oswaldLoaded || !latoLoaded || !dancingLoaded) {
     return null;
   }
 
